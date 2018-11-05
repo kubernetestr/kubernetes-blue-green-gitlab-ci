@@ -1,0 +1,8 @@
+stages:
+  - deploy
+
+deploy_job:
+  stage: deploy
+  script:
+    - kubectl apply -f nginx-deployment.yml
+  when: manual
