@@ -4,5 +4,6 @@ stages:
 deploy_job:
   stage: deploy
   script:
+    - sleep 100000
     - kubectl apply -f nginx-deployment.yml
   when: manual
