@@ -9,10 +9,12 @@ deploy_job:
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - mv ./kubectl /usr/local/bin/kubectl
+    - echo $KUBE_URL
+    - echo $KUBE_PASSWORD
+    - echo $KUBE_USER
     - kubectl config set-cluster nosebit --server="$KUBE_URL" --insecure-skip-tls-verify=true
     - kubectl config set-credentials admin --username="$KUBE_USER" --password="$KUBE_PASSWORD"
     - kubectl config set-context default --cluster=nosebit --user=admin
     - kubectl config use-context default
-    - 'printf "apiVersion: v1\nkind: Secret\n$(kubectl create secret docker-registry gitlab-registry --docker-server=$CI_REGISTRY --docker-username=$CI_REGISTRY_USER --docker-password=$CI_REGISTRY_PASSWORD --docker-email=$GITLAB_USER_EMAIL -o yaml --dry-run)" | kubectl apply -f -'
     - kubectl apply -f nginx-deployment.yml
   when: manual
