@@ -12,7 +12,7 @@ deploy_job:
     - echo $KUBE_URL
     - echo $KUBE_PASSWORD
     - echo $KUBE_USER
-    - kubectl config set-cluster nosebit --server="$KUBE_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-cluster nosebit --server="$KUBE_URL" --certificate-authority="$KUBE_CRT" 
     - kubectl config set-credentials admin --username="$KUBE_USER" --password="$KUBE_PASSWORD"
     - kubectl config set-context default --cluster=nosebit --user=admin
     - kubectl config use-context default
