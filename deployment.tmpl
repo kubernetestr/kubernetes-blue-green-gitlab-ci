@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment-v2
-  namespace: web
+  name: "APP_NAME-VERSION"
+  namespace: "web"
   labels:
-    app: nginx
+    app: "APP_NAME"
+    version: "VERSION"
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: "APP_NAME"
+      version: "VERSION"
   template:
     metadata:
       labels:
-        app: nginx
-        version: v2
+        app: "APP_NAME"
+        version: "VERSION"
     spec:
       containers:
       - name: nginx
