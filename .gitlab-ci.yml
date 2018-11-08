@@ -16,5 +16,5 @@ deploy_job:
     - kubectl config set-credentials admin --username="$KUBE_USER" --password="$KUBE_PASSWORD"
     - kubectl config set-context default --cluster=nosebit --user=admin
     - kubectl config use-context default
-    - kubectl apply -f nginx-deployment.yml
+    - ./bg-deploy.sh nginx deployment.tmpl
   when: manual
