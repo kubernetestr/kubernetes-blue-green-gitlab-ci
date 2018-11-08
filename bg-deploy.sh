@@ -14,10 +14,10 @@ cat $DEPLOYMENTFILE > deployment-$VERSION.yml
 sed -i "s/VERSION/$CI_COMMIT_SHA/g" deployment-$VERSION.yml
 sed -i "s/APP_NAME/$APP_NAME/g" deployment-$VERSION.yml
 
+# Deploy app
 kubectl apply -f deployment-$VERSION.yml
 
-#DEPLOYMENTNAME="$(yq r deployment-$VERSION.yml -j | jq -r .metadata.name)"
-
+# Deployment manifest is no longer needed.
 rm deployment-$VERSION.yml
 
 # Wait until the Deployment is ready by checking the MinimumReplicasAvailable condition.
@@ -27,14 +27,13 @@ while [[ "$READY" != "True" ]]; do
     sleep 5
 done
 
+# If service exists, patch it. If not, create it.
 if kubectl get svc -n $NAMESPACE $APP_NAME ; then
-    #kubectl patch svc -n $NAMESPACE $APP_NAME -p "{\"spec\":{\"selector\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}}"
-    #kubectl patch svc -n $NAMESPACE $APP_NAME -p "{\"metadata\":{\"labels\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}}"
-     kubectl patch svc -n $NAMESPACE $APP_NAME -p "[{\"spec\":{\"selector\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}},{\"metadata\":{\"labels\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}}]"
+    kubectl patch svc -n $NAMESPACE $APP_NAME -p "{\"spec\":{\"selector\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}}"
+    kubectl patch svc -n $NAMESPACE $APP_NAME -p "{\"metadata\":{\"labels\": {\"app\": \"${APP_NAME}\", \"version\": \"${VERSION}\"}}}"
 else
     kubectl expose deployment $DEPLOYMENTNAME --type=NodePort --name=$APP_NAME -n $NAMESPACE
 fi
 
+# Delete old deployments
 for deployment in `kubectl get deployments -n $NAMESPACE | awk 'NR>1 {print $1}'`; do if [ "$deployment" != "$DEPLOYMENTNAME" ]; then kubectl delete deployment $deployment -n $NAMESPACE; fi; done
-
-echo "Done."
