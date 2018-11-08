@@ -7,6 +7,7 @@ APP_NAME=$1
 VERSION=$CI_COMMIT_SHA
 DEPLOYMENTFILE=$2
 NAMESPACE=web
+DEPLOYMENTNAME=$APP_NAME-$VERSION
 
 cat $DEPLOYMENTFILE > deployment-$VERSION.yml
 
@@ -15,7 +16,7 @@ sed -i "s/APP_NAME/$APP_NAME/g" deployment-$VERSION.yml
 
 kubectl apply -f deployment-$VERSION.yml
 
-DEPLOYMENTNAME="$(yq r deployment-$VERSION.yml -j | jq -r .metadata.name)"
+#DEPLOYMENTNAME="$(yq r deployment-$VERSION.yml -j | jq -r .metadata.name)"
 
 rm deployment-$VERSION.yml
 
