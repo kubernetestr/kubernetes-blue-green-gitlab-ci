@@ -34,6 +34,3 @@ if kubectl get svc -n $NAMESPACE $APP_NAME ; then
 else
     kubectl expose deployment $DEPLOYMENTNAME --type=NodePort --name=$APP_NAME -n $NAMESPACE
 fi
-
-# Delete old deployments
-for deployment in `kubectl get deployments -n $NAMESPACE | awk 'NR>1 {print $1}'`; do if [ "$deployment" != "$DEPLOYMENTNAME" ]; then kubectl delete deployment $deployment -n $NAMESPACE; fi; done
